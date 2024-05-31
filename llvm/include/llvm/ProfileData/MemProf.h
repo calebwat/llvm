@@ -307,6 +307,9 @@ struct Frame {
 // A type representing the index into the table of call stacks.
 using CallStackId = uint64_t;
 
+// A type representing the index into the call stack array.
+using LinearCallStackId = uint32_t;
+
 // Holds allocation information in a space efficient format where frames are
 // represented using unique identifiers.
 struct IndexedAllocationInfo {
@@ -560,14 +563,15 @@ private:
   IndexedVersion Version;
 
   // Mappings from CallStackId to the indexes into the call stack array.
-  llvm::DenseMap<memprof::CallStackId, uint32_t> *MemProfCallStackIndexes;
+  llvm::DenseMap<memprof::CallStackId, LinearCallStackId>
+      *MemProfCallStackIndexes;
 
 public:
   // We do not support the default constructor, which does not set Version.
   RecordWriterTrait() = delete;
-  RecordWriterTrait(
-      const MemProfSchema *Schema, IndexedVersion V,
-      llvm::DenseMap<memprof::CallStackId, uint32_t> *MemProfCallStackIndexes)
+  RecordWriterTrait(const MemProfSchema *Schema, IndexedVersion V,
+                    llvm::DenseMap<memprof::CallStackId, LinearCallStackId>
+                        *MemProfCallStackIndexes)
       : Schema(Schema), Version(V),
         MemProfCallStackIndexes(MemProfCallStackIndexes) {}
 
